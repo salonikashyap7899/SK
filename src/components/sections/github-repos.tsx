@@ -37,6 +37,24 @@ const languageBg: Record<string, string> = {
   Python: "bg-green-500/10 text-green-400 border-green-400/20",
 };
 
+const defaultRepoDescriptions: Record<string, string> = {
+  "all-countries-data-fetch": "A responsive country information dashboard featuring live search, filters, and comprehensive national data.",
+  "github-pr": "A sleek GitHub explorer for browsing users, repos, and pull request history with a polished UI.",
+  "expenses-tracker-10": "A personal finance tracker with live balance updates, categorization, and visual expense summaries.",
+  "shooping-cart-redux": "A Redux-powered shopping cart demo with full cart management, product listing, and checkout interactions.",
+};
+
+function getRepoDescription(repoName: string, currentDescription: string | null) {
+  if (currentDescription && currentDescription.trim().length > 0) {
+    return currentDescription;
+  }
+
+  return (
+    defaultRepoDescriptions[repoName] ||
+    "A polished repository demonstrating modern web development best practices and clean UX."
+  );
+}
+
 function timeAgo(dateStr: string) {
   const now = new Date();
   const date = new Date(dateStr);
@@ -61,7 +79,14 @@ export function GithubRepos() {
         return res.json();
       })
       .then((data) => {
-        setRepos(data);
+        const filteredRepos = data
+          .filter((repo: Repo) => repo.name !== "risk-manager")
+          .map((repo: Repo) => ({
+            ...repo,
+            description: getRepoDescription(repo.name, repo.description),
+          }));
+
+        setRepos(filteredRepos);
         setLoading(false);
       })
       .catch(() => {
