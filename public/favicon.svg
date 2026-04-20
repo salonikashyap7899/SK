@@ -1,3 +1,24 @@
-<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="180" height="180" rx="36" fill="#FF3C00"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Blue background with rounded corners -->
+  <defs>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00A8E8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066B2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" ry="80" fill="url(#blueGradient)"/>
+  
+  <!-- User profile circle -->
+  <g transform="translate(256, 256)">
+    <!-- Head (top circle) -->
+    <circle cx="0" cy="-60" r="45" fill="white"/>
+    
+    <!-- Body (bottom circle) -->
+    <ellipse cx="0" cy="70" rx="65" ry="75" fill="white"/>
+    
+    <!-- Background circle outline -->
+    <circle cx="0" cy="0" r="140" fill="none" stroke="white" stroke-width="8"/>
+  </g>
 </svg>
