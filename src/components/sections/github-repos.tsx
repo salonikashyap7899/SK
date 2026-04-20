@@ -45,15 +45,25 @@ const defaultRepoDescriptions: Record<string, string> = {
   "shooping-cart-redux": "A Redux-powered shopping cart demo with full cart management, product listing, and checkout interactions.",
 };
 
-function getRepoDescription(repoName: string, currentDescription: string | null) {
+function formatRepoName(repoName: string) {
+  return repoName
+    .replace(/[-_]/g, " ")
+    .replace(/\b\w/g, (chr) => chr.toUpperCase());
+}
+
+function getRepoDescription(repoName: string, currentDescription: string | null, language: string | null) {
   if (currentDescription && currentDescription.trim().length > 0) {
     return currentDescription;
   }
 
-  return (
-    defaultRepoDescriptions[repoName] ||
-    "A polished repository demonstrating modern web development best practices and clean UX."
-  );
+  if (defaultRepoDescriptions[repoName]) {
+    return defaultRepoDescriptions[repoName];
+  }
+
+  const friendlyName = formatRepoName(repoName);
+  const techLabel = language ? `${language} ` : "web ";
+
+  return `A ${techLabel.trim()} project called ${friendlyName} that demonstrates modern development patterns, clean UI, and thoughtful UX.`;
 }
 
 function timeAgo(dateStr: string) {
@@ -84,7 +94,7 @@ export function GithubRepos() {
           .filter((repo: Repo) => repo.name !== "risk-manager")
           .map((repo: Repo) => ({
             ...repo,
-            description: getRepoDescription(repo.name, repo.description),
+            description: getRepoDescription(repo.name, repo.description, repo.language),
           }));
 
         setRepos(filteredRepos);
