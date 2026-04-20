@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 
 // Serve static files from the build output directory
-const buildPath = path.join(__dirname, 'dist/public');
+const buildPath = path.join(__dirname, 'dist');
 app.use(express.static(buildPath));
 
 // Handle client-side routing, return all requests to index.html
