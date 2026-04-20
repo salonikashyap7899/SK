@@ -12,15 +12,7 @@ const contactInfo = [
     bg: "bg-primary/10",
     border: "border-primary/20",
   },
-  {
-    icon: Phone,
-    label: "Phone",
-    value: "+91-9568037517",
-    href: "tel:+919568037517",
-    color: "text-green-400",
-    bg: "bg-green-400/10",
-    border: "border-green-400/20",
-  },
+
   {
     icon: MapPin,
     label: "Location",
