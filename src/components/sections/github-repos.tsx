@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Github, Star, GitFork, ExternalLink, Loader2, Code2, AlertCircle, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Repo = {
   id: number;
@@ -179,60 +180,62 @@ export function GithubRepos() {
             </button>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {repos.map((repo, idx) => (
-              <motion.div
-                key={repo.id}
-                initial={{ opacity: 0, y: 20, scale: 0.97 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, margin: "-20px" }}
-                transition={{ duration: 0.4, delay: idx * 0.05 }}
-                whileHover={{ y: -4 }}
-              >
-                <a href={repo.html_url} target="_blank" rel="noreferrer" className="block h-full">
-                  <Card className="h-full bg-card border-border hover:border-primary/50 transition-all duration-300 group hover:shadow-md hover:shadow-primary/10 rounded-2xl overflow-hidden">
-                    <CardHeader className="pb-3 relative">
-                      {/* Language badge top right */}
-                      {repo.language && (
-                        <span className={`absolute top-4 right-4 text-xs font-medium px-2 py-0.5 rounded-full border ${languageBg[repo.language] || "bg-gray-400/10 text-gray-400 border-gray-400/20"}`}>
-                          {repo.language}
-                        </span>
-                      )}
-                      <div className="flex items-start gap-2 pr-20">
-                        <Code2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                        <CardTitle className="text-sm font-bold font-mono text-primary group-hover:underline break-all leading-snug">
-                          {repo.name}
-                        </CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-xs text-muted-foreground line-clamp-2 mb-4 min-h-[32px] leading-relaxed">
-                        {repo.description || "No description provided for this repository."}
-                      </p>
-
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <div className="flex items-center gap-3">
-                          {repo.language && (
-                            <div className="flex items-center gap-1">
-                              <span className={`w-2 h-2 rounded-full ${languageColors[repo.language] || "bg-gray-400"}`} />
-                              <span className="font-medium">{repo.language}</span>
-                            </div>
-                          )}
-                          <div className="flex items-center gap-0.5">
-                            <Star className="w-3 h-3" /> {repo.stargazers_count}
-                          </div>
-                          <div className="flex items-center gap-0.5">
-                            <GitFork className="w-3 h-3" /> {repo.forks_count}
-                          </div>
+          <ScrollArea className="h-[700px] overflow-hidden rounded-3xl border border-border bg-card">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+              {repos.map((repo, idx) => (
+                <motion.div
+                  key={repo.id}
+                  initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "-20px" }}
+                  transition={{ duration: 0.4, delay: idx * 0.05 }}
+                  whileHover={{ y: -4 }}
+                >
+                  <a href={repo.html_url} target="_blank" rel="noreferrer" className="block h-full">
+                    <Card className="h-full bg-card border-border hover:border-primary/50 transition-all duration-300 group hover:shadow-md hover:shadow-primary/10 rounded-2xl overflow-hidden">
+                      <CardHeader className="pb-3 relative">
+                        {/* Language badge top right */}
+                        {repo.language && (
+                          <span className={`absolute top-4 right-4 text-xs font-medium px-2 py-0.5 rounded-full border ${languageBg[repo.language] || "bg-gray-400/10 text-gray-400 border-gray-400/20"}`}>
+                            {repo.language}
+                          </span>
+                        )}
+                        <div className="flex items-start gap-2 pr-20">
+                          <Code2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                          <CardTitle className="text-sm font-bold font-mono text-primary group-hover:underline break-all leading-snug">
+                            {repo.name}
+                          </CardTitle>
                         </div>
-                        <span className="text-xs opacity-60">{timeAgo(repo.updated_at)}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </a>
-              </motion.div>
-            ))}
-          </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-xs text-muted-foreground line-clamp-2 mb-4 min-h-[32px] leading-relaxed">
+                          {repo.description}
+                        </p>
+
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <div className="flex items-center gap-3">
+                            {repo.language && (
+                              <div className="flex items-center gap-1">
+                                <span className={`w-2 h-2 rounded-full ${languageColors[repo.language] || "bg-gray-400"}`} />
+                                <span className="font-medium">{repo.language}</span>
+                              </div>
+                            )}
+                            <div className="flex items-center gap-0.5">
+                              <Star className="w-3 h-3" /> {repo.stargazers_count}
+                            </div>
+                            <div className="flex items-center gap-0.5">
+                              <GitFork className="w-3 h-3" /> {repo.forks_count}
+                            </div>
+                          </div>
+                          <span className="text-xs opacity-60">{timeAgo(repo.updated_at)}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </a>
+                </motion.div>
+              ))}
+            </div>
+          </ScrollArea>
         )}
       </div>
     </section>
