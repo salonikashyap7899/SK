@@ -113,7 +113,7 @@ export function Hero() {
 
   return (
     <section ref={ref} className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
-      <Scene3D />
+      {/* <Scene3D /> */}
       {/* Animated background overlay */}
       <div className="absolute inset-0 bg-background/40 pointer-events-none -z-10 backdrop-blur-[2px]" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background pointer-events-none -z-10" />

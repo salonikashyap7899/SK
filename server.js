@@ -13,8 +13,12 @@ const buildPath = path.join(__dirname, 'dist/public');
 app.use(express.static(buildPath));
 
 // Handle client-side routing, return all requests to index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(buildPath, 'index.html'));
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(buildPath, 'index.html'), (err) => {
+    if (err) {
+      res.status(500).send('Error loading page');
+    }
+  });
 });
 
 app.listen(PORT, () => {
