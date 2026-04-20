@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { Code2, Palette, Database, Wrench, Star, BookOpen, Target, Zap } from "lucide-react";
 import { 
@@ -103,8 +103,17 @@ const itemVariants = {
 };
 
 export function About() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const rotate = useTransform(scrollYProgress, [0, 1], [2, -2]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.95]);
+
   return (
-    <section id="about" className="py-28 relative overflow-hidden">
+    <section ref={sectionRef} id="about" className="py-28 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute right-0 top-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
@@ -127,6 +136,7 @@ export function About() {
 
         {/* Highlights row */}
         <motion.div
+          style={{ rotate, scale }}
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -137,15 +147,24 @@ export function About() {
             <motion.div
               key={h.label}
               variants={itemVariants}
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-card border border-border rounded-2xl p-5 text-center hover:border-primary/40 transition-all cursor-default"
+              whileHover={{ 
+                y: -10, 
+                scale: 1.05,
+                rotateX: 5,
+                rotateY: 5,
+                boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)"
+              }}
+              className="bg-card border border-border rounded-2xl p-5 text-center hover:border-primary/40 transition-all cursor-default relative overflow-hidden group"
             >
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 mb-3">
-                <h.icon className="w-5 h-5 text-primary" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 mb-3">
+                  <h.icon className="w-5 h-5 text-primary" />
+                </div>
+                <p className="text-xl font-bold text-foreground">{h.value}</p>
+                <p className="text-xs font-semibold text-primary mt-0.5 uppercase tracking-wide">{h.label}</p>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{h.desc}</p>
               </div>
-              <p className="text-xl font-bold text-foreground">{h.value}</p>
-              <p className="text-xs font-semibold text-primary mt-0.5 uppercase tracking-wide">{h.label}</p>
-              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{h.desc}</p>
             </motion.div>
           ))}
         </motion.div>

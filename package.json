@@ -68,5 +68,11 @@
     "vite": "^5.3.1",
     "wouter": "^3.3.5",
     "zod": "^3.23.8"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.0",
+    "@types/three": "^0.184.0",
+    "three": "^0.184.0"
   }
 }

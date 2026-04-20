@@ -1,4 +1,5 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import { Github, ExternalLink, Code2, Layers, ShoppingCart, Globe, ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
@@ -62,11 +63,134 @@ const projects = [
   },
 ];
 
-export function Projects() {
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
+function ProjectCard({ project, idx, hoveredId, setHoveredId }: { project: any, idx: number, hoveredId: number | null, setHoveredId: (id: number | null) => void }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotX = (y - centerY) / 15;
+    const rotY = (centerX - x) / 15;
+    setRotateX(rotX);
+    setRotateY(rotY);
+  };
+
+  const handleMouseLeave = () => {
+    setRotateX(0);
+    setRotateY(0);
+    setHoveredId(null);
+  };
 
   return (
-    <section id="projects" className="py-28 relative overflow-hidden">
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.5, delay: idx * 0.1 }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onHoverStart={() => setHoveredId(project.id)}
+      style={{
+        perspective: 1000,
+        rotateX: rotateX,
+        rotateY: rotateY,
+        transition: "all 0.1s ease-out"
+      }}
+      className={`group relative bg-card border border-border rounded-2xl overflow-hidden ${project.borderColor} hover:shadow-2xl transition-shadow duration-300`}
+    >
+      {/* Top gradient bar */}
+      <div className={`h-1 w-full bg-gradient-to-r ${project.color} ${project.accentColor} opacity-100`}
+        style={{ background: `linear-gradient(to right, var(--tw-gradient-from), var(--tw-gradient-to))` }}
+      >
+        <div className={`h-full w-full ${project.accentColor} opacity-60`} />
+      </div>
+
+      {/* Card glow on hover */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
+
+      <div className="relative p-6">
+        {/* Header row */}
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-background border border-border">
+              <project.icon className={`w-5 h-5 ${project.iconColor}`} />
+            </div>
+            <div>
+              <h3 className="font-bold text-lg text-foreground leading-tight">{project.title}</h3>
+              <p className={`text-xs font-medium ${project.iconColor}`}>{project.subtitle}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <span className="text-xs font-mono opacity-60">0{project.id}</span>
+            <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+        </div>
+
+        {/* Description */}
+        <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+          {project.description}
+        </p>
+
+        {/* Highlights */}
+        <div className="grid grid-cols-2 gap-2 mb-5">
+          {project.highlights.map((h: string) => (
+            <div key={h} className="flex items-center gap-1.5 text-xs text-muted-foreground bg-background border border-border rounded-lg px-2.5 py-1.5">
+              <div className={`w-1.5 h-1.5 rounded-full ${project.accentColor}`} />
+              {h}
+            </div>
+          ))}
+        </div>
+
+        {/* Learning outcomes */}
+        <div className="mb-5">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Key Learnings</p>
+          <ul className="space-y-1">
+            {project.outcomes.map((outcome: string) => (
+              <li key={outcome} className="flex items-start gap-2 text-xs text-muted-foreground">
+                <Code2 className={`w-3 h-3 mt-0.5 shrink-0 ${project.iconColor}`} />
+                {outcome}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Tech stack */}
+        <div className="flex flex-wrap gap-1.5">
+          {project.tech.map((t: string) => (
+            <Badge
+              key={t}
+              variant="secondary"
+              className="bg-background border border-border text-xs font-mono hover:border-primary/40 transition-colors"
+            >
+              {t}
+            </Badge>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export function Projects() {
+  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.9, 1, 1, 0.9]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+
+  return (
+    <section ref={sectionRef} id="projects" className="py-28 relative overflow-hidden">
       {/* Bg decoration */}
       <div className="absolute left-0 bottom-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
@@ -89,90 +213,17 @@ export function Projects() {
         </motion.div>
 
         {/* Project grid */}
-        <div className="grid lg:grid-cols-2 gap-6">
+        <motion.div style={{ scale, opacity }} className="grid lg:grid-cols-2 gap-6">
           {projects.map((project, idx) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
-              onHoverStart={() => setHoveredId(project.id)}
-              onHoverEnd={() => setHoveredId(null)}
-              className={`group relative bg-card border border-border rounded-2xl overflow-hidden transition-all duration-300 ${project.borderColor} hover:shadow-lg`}
-            >
-              {/* Top gradient bar */}
-              <div className={`h-1 w-full bg-gradient-to-r ${project.color} ${project.accentColor} opacity-100`}
-                style={{ background: `linear-gradient(to right, var(--tw-gradient-from), var(--tw-gradient-to))` }}
-              >
-                <div className={`h-full w-full ${project.accentColor} opacity-60`} />
-              </div>
-
-              {/* Card glow on hover */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
-
-              <div className="relative p-6">
-                {/* Header row */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-background border border-border">
-                      <project.icon className={`w-5 h-5 ${project.iconColor}`} />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-lg text-foreground leading-tight">{project.title}</h3>
-                      <p className={`text-xs font-medium ${project.iconColor}`}>{project.subtitle}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 text-muted-foreground">
-                    <span className="text-xs font-mono opacity-60">0{project.id}</span>
-                    <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                </div>
-
-                {/* Description */}
-                <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-                  {project.description}
-                </p>
-
-                {/* Highlights */}
-                <div className="grid grid-cols-2 gap-2 mb-5">
-                  {project.highlights.map((h) => (
-                    <div key={h} className="flex items-center gap-1.5 text-xs text-muted-foreground bg-background border border-border rounded-lg px-2.5 py-1.5">
-                      <div className={`w-1.5 h-1.5 rounded-full ${project.accentColor}`} />
-                      {h}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Learning outcomes */}
-                <div className="mb-5">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Key Learnings</p>
-                  <ul className="space-y-1">
-                    {project.outcomes.map((outcome) => (
-                      <li key={outcome} className="flex items-start gap-2 text-xs text-muted-foreground">
-                        <Code2 className={`w-3 h-3 mt-0.5 shrink-0 ${project.iconColor}`} />
-                        {outcome}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Tech stack */}
-                <div className="flex flex-wrap gap-1.5">
-                  {project.tech.map((t) => (
-                    <Badge
-                      key={t}
-                      variant="secondary"
-                      className="bg-background border border-border text-xs font-mono hover:border-primary/40 transition-colors"
-                    >
-                      {t}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+            <ProjectCard 
+              key={project.id} 
+              project={project} 
+              idx={idx} 
+              hoveredId={hoveredId} 
+              setHoveredId={setHoveredId} 
+            />
           ))}
-        </div>
+        </motion.div>
 
         {/* CTA */}
         <motion.div

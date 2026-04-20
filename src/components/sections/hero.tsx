@@ -1,7 +1,8 @@
-import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useSpring, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Github, Linkedin, Mail, ArrowRight, MapPin, GraduationCap, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
+import { Scene3D } from "./scene3d";
 
 const ROLES = [
   "Full Stack Developer",
@@ -101,21 +102,23 @@ export function Hero() {
     return () => observer.disconnect();
   }, []);
 
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
+
   return (
     <section ref={ref} className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0 bg-background pointer-events-none -z-10">
-        <FloatingOrb className="top-1/4 left-1/4 w-96 h-96 bg-primary/20 blur-[128px] opacity-60" />
-        <FloatingOrb className="bottom-1/3 right-1/4 w-80 h-80 bg-pink-500/15 blur-[100px] opacity-50" />
-        <FloatingOrb className="top-1/2 right-1/3 w-64 h-64 bg-violet-500/20 blur-[80px] opacity-40" />
-        {/* Grid overlay */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: "linear-gradient(rgba(168,85,247,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(168,85,247,0.4) 1px, transparent 1px)",
-          backgroundSize: "60px 60px"
-        }} />
-      </div>
+      <Scene3D />
+      {/* Animated background overlay */}
+      <div className="absolute inset-0 bg-background/40 pointer-events-none -z-10 backdrop-blur-[2px]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background pointer-events-none -z-10" />
 
-      <div className="container mx-auto px-4 md:px-6">
+      <motion.div style={{ y, opacity, scale }} className="container mx-auto px-4 md:px-6 z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Text content */}
           <motion.div
@@ -305,7 +308,7 @@ export function Hero() {
             <div className="w-1 h-2 bg-primary rounded-full" />
           </motion.div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }
