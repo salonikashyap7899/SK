@@ -18,6 +18,7 @@ const projects = [
     accentColor: "bg-blue-500",
     outcomes: ["API integration & async data fetching", "Responsive UI/UX design", "Search & filter functionality", "App deployment on Netlify"],
     highlights: ["180+ countries", "Live Search", "Flag Gallery", "Region Filter"],
+    liveUrl: "https://all-countries-data-fetch.netlify.app/",
   },
   {
     id: 2,
@@ -32,6 +33,7 @@ const projects = [
     accentColor: "bg-gray-500",
     outcomes: ["GitHub API integration", "Async data handling", "User input management", "Responsive deployment on Netlify"],
     highlights: ["GitHub API", "PR History", "Real-time Search", "Responsive"],
+    liveUrl: "https://github-pr.netlify.app/",
   },
   {
     id: 3,
@@ -46,6 +48,7 @@ const projects = [
     accentColor: "bg-green-500",
     outcomes: ["React state management", "Controlled form handling", "Dynamic expense logic", "Clean functional UI"],
     highlights: ["Live Balance", "Add & Remove", "Category Tags", "Responsive"],
+    liveUrl: "https://expenses-tracker-10.netlify.app/",
   },
   {
     id: 4,
@@ -60,6 +63,7 @@ const projects = [
     accentColor: "bg-purple-500",
     outcomes: ["Redux Toolkit state management", "API data fetching", "Cart CRUD operations", "Multi-page routing with React Router"],
     highlights: ["Redux Store", "API Data", "Cart Control", "Multi-page"],
+    liveUrl: "https://shooping-cart-redux.netlify.app/",
   },
 ];
 
@@ -88,7 +92,10 @@ function ProjectCard({ project, idx, hoveredId, setHoveredId }: { project: any, 
   };
 
   return (
-    <motion.div
+    <motion.a
+      href={project.liveUrl}
+      target="_blank"
+      rel="noopener noreferrer"
       ref={cardRef}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -103,7 +110,7 @@ function ProjectCard({ project, idx, hoveredId, setHoveredId }: { project: any, 
         rotateY: rotateY,
         transition: "all 0.1s ease-out"
       }}
-      className={`group relative bg-card border border-border rounded-2xl overflow-hidden ${project.borderColor} hover:shadow-2xl transition-shadow duration-300`}
+      className={`group relative bg-card border border-border rounded-2xl overflow-hidden ${project.borderColor} hover:shadow-2xl transition-shadow duration-300 cursor-pointer`}
     >
       {/* Top gradient bar */}
       <div className={`h-1 w-full bg-gradient-to-r ${project.color} ${project.accentColor} opacity-100`}
@@ -174,7 +181,7 @@ function ProjectCard({ project, idx, hoveredId, setHoveredId }: { project: any, 
           ))}
         </div>
       </div>
-    </motion.div>
+    </motion.a>
   );
 }
 
